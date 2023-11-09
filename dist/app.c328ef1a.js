@@ -132,27 +132,36 @@ function getData(url) {
 
 // console.log(ajax.response); // 응답하기
 
-// JSON 형태를 객체로 변환하기
-var newsFeed = getData(NEWS_URL);
-var ul = document.createElement("ul");
+function newsFeed() {
+  // JSON 형태를 객체로 변환하기
+  var newsFeed = getData(NEWS_URL);
+  var newsList = [];
+  newsList.push("<ul>");
 
-// 받아온 데이터를 반복문 사용해서 보여주기
-
-window.addEventListener("hashchange", function () {
+  // 받아온 데이터를 반복문 사용해서 보여주기
+  for (var i = 0; i < 10; i++) {
+    newsList.push("\n  <li>\n  <a href='#".concat(newsFeed[i].id, "'>\n  ").concat(newsFeed[i].title, " (").concat(newsFeed[i].comments_count, ")\n  </a>\n  </li>\n  "));
+  }
+  newsList.push("</ul>");
+  container.innerHTML = newsList.join("");
+}
+function newsDetail() {
   var id = location.hash.substr(1);
   var newsContent = getData(CONTENT_URL.replace("@id", id));
-  var title = document.createElement("h1");
-  title.innerHTML = newsContent.title;
-  content.appendChild(title);
-  console.log(newsContent);
-});
-for (var i = 0; i < 10; i++) {
-  var div = document.createElement("div");
-  div.innerHTML = "\n    <li>\n      <a href='#".concat(newsFeed[i].id, "'>\n        ").concat(newsFeed[i].title, " (").concat(newsFeed[i].comments_count, ")\n      </a>\n    </li>\n  ");
-  ul.appendChild(div.firstElementChild);
+  // const title = document.createElement("h1");
+
+  container.innerHTML = "\n    <h1>".concat(newsContent.title, "</h1>\n    <div>\n      <a href=\"#\">\uBAA9\uB85D\uC73C\uB85C</a>\n    </div>\n  ");
 }
-container.appendChild(ul);
-container.appendChild(content);
+function router() {
+  var routePath = location.hash;
+  if (routePath === "") {
+    newsFeed();
+  } else {
+    newsDetail();
+  }
+}
+window.addEventListener("hashchange", router);
+router();
 },{}],"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
