@@ -20,30 +20,37 @@ function newsFeed() {
   // JSON 형태를 객체로 변환하기
   const newsFeed = getData(NEWS_URL);
   const newsList = [];
-
-  newsList.push("<ul>");
+  let template = `
+    <div class="container mx-auto p-4">
+      <h1>hacker news</h1>
+      <ul>
+          {{__news_feed__}}
+      </ul>
+      <div>
+        <a href="#/page/{{__prev_page__}}">이전 페이지</a>
+        <a href="#/page/{{__next_page__}}">다음 페이지</a>
+      </div>
+    </div>
+  `;
 
   // 받아온 데이터를 반복문 사용해서 보여주기
   for (let i = (store.currentPage - 1) * 10; i < store.currentPage * 10; i++) {
     newsList.push(`
   <li>
-  <a href='#${newsFeed[i].id}'>
-  ${newsFeed[i].title} (${newsFeed[i].comments_count})
-  </a>
+    <a href='#/${newsFeed[i].id}'>
+      ${newsFeed[i].title} (${newsFeed[i].comments_count})
+    </a>
   </li>
   `);
   }
-  newsList.push("</ul>");
-  newsList.push(`
-    <div>
-    <a href='#/page/${
-      store.currentPage > 1 ? store.currentPage - 1 : 1
-    }'>이전</a>
-    <a href='#/page/${store.currentPage + 1}'>다음</a>
-    </div>
-  `);
+  template = template.replace("{{__news_feed__}}", newsList.join(""));
+  template = template.replace(
+    "{{__prev_page__}}",
+    store.currentPage > 1 ? store.currentPage - 1 : 1
+  );
+  template = template.replace("{{__next_page__}}", store.currentPage + 1);
 
-  container.innerHTML = newsList.join("");
+  container.innerHTML = template;
 }
 function newsDetail() {
   const id = location.hash.substr(7);
